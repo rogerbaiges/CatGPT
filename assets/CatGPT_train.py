@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import tiktoken
+from time import time
 
 
 # Create Data Loadet class
@@ -48,22 +49,29 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
 
 device = "cpu" # Force CPU as on mac book pro m2 mps is slower
 
-train_loader = DataLoaderLite("data/tiny_corpus.txt", B=4, T=32)
 
+# Create DataLoader
+train_loader = DataLoaderLite("data/tiny_corpus.txt", B=2, T=1024)
+
+# Set matmul precision to lower
+
+torch.set_float32_matmul_precision('medium')
+
+# Create model and optimizer
 model = GPT(GPTConfig())
 model.to(device)
- 
-
+#model = torch.compile(model)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
-for i in range(500):
+for i in range(50):
+    initial_time = time()
     x, y = train_loader.next_batch()
     x, y = x.to(device), y.to(device)
     optimizer.zero_grad()
     logits, loss = model(x, y)
     loss.backward()
     optimizer.step()
-    print(f"Step {i}, Loss: {loss.item()}")
+    print(f"Step {i}, Loss: {loss.item()}, Time: {time() - initial_time}")
 
 
 
