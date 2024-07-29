@@ -107,3 +107,4 @@ class GPT(nn.Module):
         x = self.transformer.ln_f(x)
         logits = self.lm_head(x)
         return logits
+    
