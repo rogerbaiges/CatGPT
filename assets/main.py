@@ -15,6 +15,10 @@ elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
 device = "cpu" # Force CPU as on mac book pro m2 mpi is slower
 print(f"Using device: {device}")
 
+seed = 42
+torch.manual_seed(42)
+print(f"Using seed {seed}")
+
 from time import time
 
 
@@ -43,7 +47,7 @@ torch.manual_seed(42)
 while x.size(1) < max_length:
     # forward the model to get the logits
     with torch.no_grad():
-        logits = model(x)  # (B, T, vocab_size)
+        logits, _ = model(x)  # (B, T, vocab_size)
         # take the logits at the last position
         logits = logits[:, -1, :]  # (B, vocab_size)
         # get the probabilities
