@@ -5,6 +5,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import tiktoken
 from time import time
+from dataclasses import dataclass
 
 
 # Create Data Loadet class
@@ -39,39 +40,61 @@ class DataLoaderLite:
             self.current_position = 0
         return x, y
 
+@dataclass
+class CatGPT_training_config:
+    B = 2
+    T = 1024
+    float_matmul_precision = 'medium'
+    vocab_size = 50304
+    lr = 3e-4
+    betas = (0.9, 0.95)
+    eps = 1e-8
+    compile_model = False
+    use_gpu = False
+    iterations = 50
 
-# Attempt to autodetect the device
+CatGPT_basic_config = CatGPT_training_config()
+
 device = "cpu"
-if torch.cuda.is_available():
-    device = "cuda"
-elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
-    device = "mps"
 
-device = "cpu" # Force CPU as on mac book pro m2 mps is slower
+if CatGPT_training_config.use_gpu:
+    if torch.cuda.is_available():
+        device = "cuda"
+    elif hasattr(torch.backends, "mps") and torch.backends.mps.is_available():
+        device = "mps"
+    print(f"Using device: {device}")
 
 
 # Create DataLoader
-train_loader = DataLoaderLite("data/tiny_corpus.txt", B=2, T=1024)
+train_loader = DataLoaderLite("data/tiny_corpus.txt", B=CatGPT_training_config.B, T=CatGPT_training_config.T)
 
 # Set matmul precision to lower
 
-torch.set_float32_matmul_precision('medium')
+torch.set_float32_matmul_precision(CatGPT_training_config.float_matmul_precision)
 
 # Create model and optimizer
-model = GPT(GPTConfig())
+model = GPT(GPTConfig(vocab_size=CatGPT_training_config.vocab_size))
 model.to(device)
-#model = torch.compile(model)
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=3e-4)
-for i in range(50):
+if CatGPT_training_config.compile_model:
+    model = torch.compile(model)
+
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=CatGPT_training_config.lr, betas=CatGPT_training_config.betas, eps=CatGPT_basic_config.eps)
+
+for i in range(CatGPT_basic_config.iterations):
     initial_time = time()
     x, y = train_loader.next_batch()
     x, y = x.to(device), y.to(device)
     optimizer.zero_grad()
     logits, loss = model(x, y)
     loss.backward()
+    norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
     optimizer.step()
-    print(f"Step {i}, Loss: {loss.item()}, Time: {time() - initial_time}")
+    dt = time() - initial_time
+    tokens_processed = train_loader.B * train_loader.T
+    tokens_per_second = tokens_processed / dt
+    print(f"Step {i}, Loss: {loss.item()}, Time: {dt}, Tokens/s: {tokens_per_second}")
 
 
 
