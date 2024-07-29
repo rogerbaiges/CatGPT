@@ -2,7 +2,7 @@ import tiktoken
 
 
 # Obtain the tokenizer specific for the GPT-4 model
-tokenizer = tiktoken.encoding_for_model("gpt-4")
+tokenizer = tiktoken.encoding_for_model("gpt-2")
 
 # Text to tokenize
 text = "Aquest és un text en català que vull tokenitzar."
