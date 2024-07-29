@@ -1,6 +1,7 @@
 from CatGPT_model import GPT, GPTConfig
 
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 
