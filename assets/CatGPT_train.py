@@ -1,11 +1,11 @@
 from CatGPT_model import GPT, GPTConfig
-
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import tiktoken
 from time import time
 from dataclasses import dataclass
+from math import cos, pi
 
 
 # Create Data Loadet class
@@ -46,12 +46,14 @@ class CatGPT_training_config:
     T = 1024
     float_matmul_precision = 'medium'
     vocab_size = 50304
-    lr = 3e-4
+    max_lr = 6e-4
+    min_lr = max_lr * 0.1
+    warmup_steps = 10
+    steps = 50
     betas = (0.9, 0.95)
     eps = 1e-8
     compile_model = False
     use_gpu = False
-    iterations = 50
 
 CatGPT_basic_config = CatGPT_training_config()
 
@@ -80,9 +82,25 @@ if CatGPT_training_config.compile_model:
     model = torch.compile(model)
 
 
-optimizer = torch.optim.AdamW(model.parameters(), lr=CatGPT_training_config.lr, betas=CatGPT_training_config.betas, eps=CatGPT_basic_config.eps)
+# Warmup + cosine decay learning rate schedule
 
-for i in range(CatGPT_basic_config.iterations):
+def get_lr(it):
+    # 1) linear warmup for warmup_iters steps
+    if it < CatGPT_basic_config.warmup_steps:
+        return CatGPT_basic_config.max_lr * (it + 1) / CatGPT_basic_config.warmup_steps
+    # 2) if it > lr_decay_iters, return min learning rate
+    if it > CatGPT_basic_config.max_steps:
+        return CatGPT_basic_config.min_lr
+    # 3) in between, use cosine decay down to min learning rate
+    decay_ratio = (it - CatGPT_basic_config.warmup_steps) / (CatGPT_basic_config.max_steps - CatGPT_basic_config.warmup_steps)
+    assert 0 <= decay_ratio <= 1
+    coeff = 0.5 * (1.0 + cos(pi * decay_ratio)) # coeff starts at 1 and goes to 0
+    return CatGPT_basic_config.min_lr + coeff * (CatGPT_basic_config.max_lr - CatGPT_basic_config.min_lr)
+
+
+optimizer = torch.optim.AdamW(model.parameters(), lr=CatGPT_training_config.max_lr, betas=CatGPT_training_config.betas, eps=CatGPT_basic_config.eps)
+
+for i in range(CatGPT_basic_config.steps):
     initial_time = time()
     x, y = train_loader.next_batch()
     x, y = x.to(device), y.to(device)
@@ -90,11 +108,16 @@ for i in range(CatGPT_basic_config.iterations):
     logits, loss = model(x, y)
     loss.backward()
     norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
+
+    # Update the learning rate
+    lr = get_lr(i)
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
     optimizer.step()
     dt = time() - initial_time
     tokens_processed = train_loader.B * train_loader.T
     tokens_per_second = tokens_processed / dt
-    print(f"Step {i}, Loss: {loss.item()}, Time: {dt}, Tokens/s: {tokens_per_second}")
+    print(f"Step {i} | Loss: {loss.item()} | Time: {dt} | Tokens/s: {tokens_per_second}")
 
 
 
