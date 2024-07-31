@@ -89,10 +89,10 @@ def get_lr(it):
     if it < CatGPT_basic_config.warmup_steps:
         return CatGPT_basic_config.max_lr * (it + 1) / CatGPT_basic_config.warmup_steps
     # 2) if it > lr_decay_iters, return min learning rate
-    if it > CatGPT_basic_config.max_steps:
+    if it > CatGPT_basic_config.steps:
         return CatGPT_basic_config.min_lr
     # 3) in between, use cosine decay down to min learning rate
-    decay_ratio = (it - CatGPT_basic_config.warmup_steps) / (CatGPT_basic_config.max_steps - CatGPT_basic_config.warmup_steps)
+    decay_ratio = (it - CatGPT_basic_config.warmup_steps) / (CatGPT_basic_config.steps - CatGPT_basic_config.warmup_steps)
     assert 0 <= decay_ratio <= 1
     coeff = 0.5 * (1.0 + cos(pi * decay_ratio)) # coeff starts at 1 and goes to 0
     return CatGPT_basic_config.min_lr + coeff * (CatGPT_basic_config.max_lr - CatGPT_basic_config.min_lr)
@@ -117,7 +117,8 @@ for i in range(CatGPT_basic_config.steps):
     dt = time() - initial_time
     tokens_processed = train_loader.B * train_loader.T
     tokens_per_second = tokens_processed / dt
-    print(f"Step {i} | Loss: {loss.item()} | Time: {dt} | Tokens/s: {tokens_per_second}")
+    print(f"Step {i} | Loss: {loss.item()} | Time: {dt} | Tokens/s: {tokens_per_second} | LR: {lr}")
+
 
 
 
@@ -144,7 +145,7 @@ import tiktoken
 
 # prefix tokens
 enc = tiktoken.get_encoding('gpt2')
-tokens = enc.encode("Hello, I'm a language model,")
+tokens = enc.encode("Durant la primera guerra mundial, ")
 tokens = torch.tensor(tokens, dtype=torch.long)  # (8,)
 tokens = tokens.unsqueeze(0).repeat(num_return_sequences, 1)  # (B, 8)
 x = tokens.to(device)
