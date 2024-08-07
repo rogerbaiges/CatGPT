@@ -1,6 +1,9 @@
 # CatGPT
 
-<img src="logo/CatGPT.jpg" alt="CatGPT Logo" style="width:50%; height:auto;">
+<div align="center">
+  <img src="logo/CatGPT.jpg" alt="CatGPT Logo" style="width:50%; height:auto;">
+</div>
+
 
 ## Project Objective / Objectius del Projecte
 
@@ -49,10 +52,10 @@ A més, el model s'ha entrenat amb un total d'uns 3000 milions de tokens únics 
 ## Tokenizer
 
 **English:**  
-For this project, a specific tokenizer with 32,768 different tokens has been created. This tokenizer was generated using a 50 MB subset of the training data, ensuring adequate coverage of the Catalan vocabulary.
+For this project, a specific tokenizer with 32,768 different tokens has been created using the byte pair encoding (BPE) algorithm. This tokenizer was generated using a 50 MB subset of the training data, ensuring adequate coverage of the Catalan vocabulary.
 
 **Català:**  
-Per a aquest projecte, s'ha creat un tokenizer específic amb 32,768 tokens diferents. Aquest tokenizer ha estat generat utilitzant un subset de 50 MB de les dades d'entrenament, assegurant una cobertura adequada del vocabulari català.
+Per a aquest projecte, s'ha creat un tokenizer específic amb 32,768 tokens diferents utilitzant l'algoritme byte pair encoding (BPE). Aquest tokenizer ha estat generat utilitzant un subset de 50 MB de les dades d'entrenament, assegurant una cobertura adequada del vocabulari català.
 
 ## Document Structure / Estructura dels Documents
 
