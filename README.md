@@ -1,6 +1,6 @@
 # CatGPT
 
-![CatGPT Logo](logo/CatGPT.jpg){:height="100px" width="100px"}
+<img src="logo/CatGPT.jpg" alt="CatGPT Logo" style="width:50%; height:auto;">
 
 ## Project Objective / Objectius del Projecte
 
@@ -31,7 +31,7 @@ The model has been trained using various datasets, including:
 
 - **Catalan_Textual Dataset:** A specifically created dataset to cover a wide range of Catalan texts.
 
-Additionally, the model was trained with a total of approximately 3000 unique tokens and 5460 million tokens (considering different epochs of training with the Oscar dataset).
+Additionally, the model was trained with a total of approximately 3000 million unique tokens and 5460 million tokens (considering different epochs of training with the Oscar dataset).
 
 **Català:**  
 El model ha estat entrenat utilitzant diversos datasets, incloent:
@@ -44,7 +44,7 @@ El model ha estat entrenat utilitzant diversos datasets, incloent:
 
 - **Catalan_Textual Dataset:** Un conjunt de dades específicament creat per cobrir una àmplia gamma de textos en català.
 
-A més, el model s'ha entrenat amb un total d'uns 3000 tokens únics i 5460 milions de tokens (comptant diferents epochs d'entrenament amb el dataset Oscar).
+A més, el model s'ha entrenat amb un total d'uns 3000 milions de tokens únics i 5460 milions de tokens (comptant diferents epochs d'entrenament amb el dataset Oscar).
 
 ## Tokenizer
 
@@ -60,17 +60,13 @@ Per a aquest projecte, s'ha creat un tokenizer específic amb 32,768 tokens dife
    - **English:** Contains the code to create and train the tokenizer for the CatGPT model.  
    - **Català:** Conté el codi per crear i entrenar el tokenizer per al model CatGPT.
    
-2. **dataset.ipynb:**  
+2. **CatGPT_dataset.ipynb:**  
    - **English:** Describes the steps to prepare the dataset used to train the model.  
    - **Català:** Descriu els passos per preparar el dataset utilitzat per entrenar el model.
 
 3. **CatGPT_train.py:**  
    - **English:** Script to train the CatGPT model, including model configuration and hyperparameters.  
    - **Català:** Script per entrenar el model CatGPT, incloent configuració del model i hiperparàmetres.
-
-4. **CatGPT_training.ipynb:**  
-   - **English:** Details the model training process with metric visualization.  
-   - **Català:** Detalla el procés de formació del model amb visualització de mètriques.
 
 5. **main.ipynb:**  
    - **English:** Examples of using the trained model to generate text from phrases in Catalan.  
