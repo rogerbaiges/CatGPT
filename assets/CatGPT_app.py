@@ -81,15 +81,27 @@ def generate_text(model, input_text='La intel·ligència artificial tindrà la c
 
 
 # Streamlit interface
-st.title('CatGPT Model')
-st.write('Generate text using your CatGPT model')
+
+st.set_page_config(page_title="CatGPT")
+
+# Use columns to place the logo next to the title
+col1, col2 = st.columns([3, 1])
+
+with col1:
+    st.title('CatGPT Model')
+    st.write('Generate text using your CatGPT model')
+
+with col2:
+    logo_path = "logo/CatGPT_round.png"
+    st.image(logo_path, width=150)
+
 
 
 random_inputs = ["La intel·ligència artificial tindrà la capacitat de",
                    "El 23 d'abril, dia de Sant Jordi, els carrers de Catalunya s'omplen de",
                    "Durant la Guerra Civil Espanyola, Catalunya va ser un bastió de resistència republicana perquè",
                    "Els Bitcoin i altres criptomonedes s'han convertit en temes importants a Catalunya, especialment després de",
-                   "La meva casa és",
+                   "La meva casa és un lloc molt acollidor",
                    "El clima mediterrani permet gaudir de llargues jornades assolellades a la vora del mar.",
                    "El sol es ponia en l'horitzó de milers de colors però els pirates no podien"]
 
@@ -142,7 +154,7 @@ if st.button('Generate'):
         # Select a random tip to display
         selected_tip = random.choice(tips)
         tip_placeholder = st.info(selected_tip)  # Show the tip
-        generated_texts = generate_text(model, input_text, num_return_sequences=1, max_length=max_length, device=device, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        generated_texts = generate_text(model, input_text, num_return_sequences, max_length=max_length, device=device, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         tip_placeholder.empty()  # Delete the tip after generating the text
     for i, text in enumerate(generated_texts):
         st.write(f'Sample {i+1}:')
