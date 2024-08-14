@@ -44,6 +44,12 @@ def generate_text(model, input_text='La intel·ligència artificial tindrà la c
         max_length = len(tokens) + 50
         print(f"Max length set to {max_length} as input text is longer than the previous max length")
 
+
+    # Training biased n-grams
+    days_of_week = [" dilluns", " dimarts", " dimecres", " dijous", " divendres", " dissabte", " diumenge"]
+    days_of_week_ids = [enc.encode(day).ids[0] for day in days_of_week]  # Code the days of the week
+    other_ids = [enc.encode(word).ids[0] for word in ["passat", " passat", " dia", "proper", " proper", " següent", "següent"]]  # Code other words
+
     generated_texts = []
     for _ in range(num_return_sequences):
         x = tokens.unsqueeze(0).to(device)
@@ -61,6 +67,16 @@ def generate_text(model, input_text='La intel·ligència artificial tindrà la c
                 if x.size(1) > 1:
                     for token in set(x[0].tolist()):
                         logits[0, token] /= repetition_penalty
+
+                # Look for last token to avoid training bias n-grams
+                last_token_id = x[0, -1].item()
+                last_word = enc.decode([last_token_id])
+                
+                if last_word.lower().strip() in {"el", "passat"} or last_token_id in days_of_week_ids:
+                    for day_id in days_of_week_ids:
+                        logits[0, day_id] /= 5
+                    for other_id in other_ids:
+                        logits[0, other_id] /= 5
 
                 # Apply Top-k sampling
                 if top_k > 0:
@@ -139,13 +155,12 @@ tips = [
     "Tip: Use temperature to control the randomness of predictions. Lower values make the model more deterministic.",
     "Tip: Adjust top-k to limit the sampling pool to the top-k probable next tokens.",
     "Tip: Use repetition penalty to avoid generating repetitive sequences.",
-    "Tip: Experiment with different max_length values to control the length of the output.",
     "Tip: In order to generate more creative text, try different input prompts.",
     "Tip: As the max_length increases, there will be a higher chance of generating repetitive text or hallucinations. Adjust repetition penalty accordingly.",
     "Tip: The model may generate text that is not coherent or relevant to the input prompt. Try different prompts to get better results.",
     "Tip: Adjust top-k to 0 to allow sampling from the entire vocabulary distribution.",
     "Tip: Use a higher temperature to generate more diverse and creative text but remember to set a top_k different to 1.",
-    "Tip: Providing a specific and well-defined prompt can improve the relevance of the generated text."
+    "Tip: Providing a specific and well-defined prompt can improve the relevance of the generated text.",
 ]
 
 
