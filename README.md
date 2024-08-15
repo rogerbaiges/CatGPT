@@ -23,18 +23,36 @@
 ## Project Objective / Objectius del Projecte
 
 **English:**  
-CatGPT is a Catalan natural language model created with the goal of providing a lightweight yet effective model that can continue sentences in Catalan. This project is designed to facilitate the generation of coherent and relevant text in Catalan.
+CatGPT is a Catalan natural language model created with the goal of providing a lightweight yet effective model that can continue sentences in Catalan. This project is designed to facilitate the generation of coherent and relevant text in Catalan. The model is primarily intended for educational purposes, offering a simple yet functional tool for exploring natural language processing in Catalan. Given its small size, the model does not aim for high performance but rather serves as an accessible resource for learning and experimentation.
 
 **Català:**  
-CatGPT és un model de llenguatge natural en català, creat amb l'objectiu de proporcionar un model lleuger però efectiu que pugui continuar oracions en català. Aquest projecte està dissenyat per facilitar la generació de text coherent i rellevant en català.
+CatGPT és un model de llenguatge natural en català, creat amb l'objectiu de proporcionar un model lleuger però efectiu que pugui continuar oracions en català. Aquest projecte està dissenyat per facilitar la generació de text coherent i rellevant en català. El model està pensat principalment per a usos educatius, oferint una eina senzilla però funcional per explorar el processament del llenguatge natural en català. Atès que la mida del model és reduïda, no té com a objectiu assolir un alt rendiment, sinó servir com a recurs accessible per a l'aprenentatge i l'experimentació.
 
 ## Model Structure / Estructura del Model
 
 **English:**  
-CatGPT is based on a structure similar to GPT-2, but with approximately 110 million parameters. This reduction in model size allows for faster training and inference while maintaining reasonable text generation quality.
+CatGPT is modeled after a structure similar to GPT-2 and features the following key specifications:
+
+- **Parameters:** ~111 million  
+- **Vocabulary Size:** 32,768 unique tokens (Catalan-specific)
+- **Number of Layers:** 12
+- **Attention Heads:** 8
+- **Embedding Size:** 768
+- **Block Size:** 1024 tokens
+
+The model’s parameter count is primarily influenced by its specialized Catalan vocabulary. Despite being relatively compact, these design choices ensure efficient training and inference, providing satisfactory text generation quality within the Catalan language context.
 
 **Català:**  
-CatGPT està basat en una estructura similar a GPT-2, però amb aproximadament 110 milions de paràmetres. Aquesta reducció de la mida del model permet un entrenament i una inferència més ràpids, tot i mantenir una qualitat de generació de text raonable.
+CatGPT segueix una estructura similar a GPT-2 i presenta les següents especificacions clau:
+
+- **Paràmetres:** ~111 milions  
+- **Mida del Vocabulari:** 32.768 tokens únics (adaptat al català)
+- **Nombre de Capes:** 12
+- **Capçals d'Atenció:** 8
+- **Mida dels Embeddings:** 768
+- **Mida del Bloc:** 1024 tokens
+
+El nombre de paràmetres està principalment influenciat pel vocabulari especialitzat en català. Tot i ser relativament compacte, aquestes decisions de disseny asseguren un entrenament i una inferència eficients, oferint una qualitat de generació de text satisfactòria dins del context de la llengua catalana.
 
 ## Training Datasets / Datasets d'Entrenament
 
@@ -49,7 +67,7 @@ The model has been trained using various datasets, including:
 
 - **Catalan_Textual Dataset:** A specifically created dataset to cover a wide range of Catalan texts.
 
-Additionally, the model was trained with a total of approximately 3000 million unique tokens and 5460 million tokens (considering different epochs of training with the Oscar dataset).
+Additionally, the model was trained with a total of approximately 3000 million unique tokens and over 6500 million tokens (considering different epochs of training with the Oscar dataset).
 
 **Català:**  
 El model ha estat entrenat utilitzant diversos datasets, incloent:
@@ -62,7 +80,7 @@ El model ha estat entrenat utilitzant diversos datasets, incloent:
 
 - **Catalan_Textual Dataset:** Un conjunt de dades específicament creat per cobrir una àmplia gamma de textos en català.
 
-A més, el model s'ha entrenat amb un total d'uns 3000 milions de tokens únics i 5460 milions de tokens (comptant diferents epochs d'entrenament amb el dataset Oscar).
+A més, el model s'ha entrenat amb un total d'uns 3000 milions de tokens únics i amb més de 5460 milions de tokens (comptant diferents epochs d'entrenament amb el dataset Oscar).
 
 ## Tokenizer
 
