@@ -103,15 +103,9 @@ The following is the structure of the code repository:
 │   ├── CatGPT_run.py
 │   ├── CatGPT_train.ipynb
 │   └── __pycache__
-│       └── CatGPT_model.cpython-310.pyc
 ├── data
 │   ├── CatGPT_dataset.txt
-│   ├── catalan_oscar.txt
-│   ├── catalan_textual_corpus.txt
-│   ├── full_corpus.txt
-│   ├── small_catalan_oscar.txt
-│   ├── small_corpus.txt
-│   └── tiny_corpus.txt
+│   └── small_catalan_oscar.txt
 ├── images
 │   ├── future_AI_example.png
 │   └── house_example.png
