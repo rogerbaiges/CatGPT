@@ -208,38 +208,49 @@ En aquesta captura de pantalla, el model genera una descripció detallada d'una 
 ## Installation / Instal·lació
 
 **English:**  
-1. Clone this repository to your local machine:
+1. If you don't have Git LFS installed, you need to install it first to download the model file correctly:
+    ```bash
+    git lfs install
+    ```
+
+2. Clone this repository to your local machine:
     ```bash
     git clone https://github.com/yourusername/CatGPT.git
     cd CatGPT
     ```
 
-2. Install the required libraries:
+3. Install the required libraries:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Run the app:
+4. Run the app:
     ```bash
     python assets/CatGPT_run.py
     ```
 
 **Català:**  
-1. Clona aquest repositori a la teva màquina local:
+1. Si no tens Git LFS instal·lat, cal que l'instal·lis primer per descarregar correctament l'arxiu del model:
+    ```bash
+    git lfs install
+    ```
+
+2. Clona aquest repositori a la teva màquina local:
     ```bash
     git clone https://github.com/yourusername/CatGPT.git
     cd CatGPT
     ```
 
-2. Instal·la les biblioteques necessàries:
+3. Instal·la les biblioteques necessàries:
     ```bash
     pip install -r requirements.txt
     ```
 
-3. Executa l'aplicació:
+4. Executa l'aplicació:
     ```bash
     python assets/CatGPT_run.py
     ```
+
 
 ## Contributing / Contribucions
 
