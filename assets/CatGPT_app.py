@@ -24,10 +24,16 @@ def load_model(model, model_path, device='cpu'):
 
 @st.cache_resource
 def get_model():
-    model = GPT(GPTConfig(vocab_size=32768))
-    model = torch.compile(model)
-    load_model(model, model_path="models/CatGPT.pth")
-    return model
+    try:
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+        tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT")
+        model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT")
+    except:
+        model = GPT(GPTConfig(vocab_size=32768))
+        model = torch.compile(model)
+        load_model(model, model_path="models/CatGPT.pth")
+        tokenizer = None
+    return model, tokenizer
 
 
 def generate_text(model, input_text='La intel·ligència artificial tindrà la capacitat de', num_return_sequences=1, max_length=100, device='cpu', temperature=1.0, top_k=10, repetition_penalty=1.2):
@@ -145,7 +151,11 @@ with col3:
 with col4:
     repetition_penalty = st.slider('Repetition Penalty', min_value=1.0, max_value=2.0, value=1.2, step=0.1)
 
-model = get_model()
+
+# Load the model
+
+model, HF_tokenizer = get_model()
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -169,7 +179,15 @@ if st.button('Generate'):
         # Select a random tip to display
         selected_tip = random.choice(tips)
         tip_placeholder = st.info(selected_tip)  # Show the tip
-        generated_texts = generate_text(model, input_text, num_return_sequences, max_length=max_length, device=device, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
+        if HF_tokenizer:
+            inputs = HF_tokenizer(input_text, return_tensors="pt")
+            outputs = model.generate(inputs.input_ids, max_length=max_length, num_return_sequences=num_return_sequences, repetition_penalty=repetition_penalty, temperature=temperature, top_k=top_k, do_sample=True)
+            generated_texts = []
+            for output in outputs:
+                generate_text = HF_tokenizer.decode(output, skip_special_tokens=True)
+                generated_texts.append(generate_text)
+        else:
+            generated_texts = generate_text(model, input_text, num_return_sequences, max_length=max_length, device=device, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         tip_placeholder.empty()  # Delete the tip after generating the text
     for i, text in enumerate(generated_texts):
         st.write(f'Sample {i+1}:')
