@@ -1,105 +1,17 @@
 import streamlit as st
-import torch
-from tokenizers import ByteLevelBPETokenizer
-import torch.nn.functional as F
-from CatGPT_model import GPT, GPTConfig
+from transformers import AutoModelForCausalLM, AutoTokenizer
 import random
-import time
 
 # In order to run this code just exectue the CatGPT_run.py file
 
-
-def load_model(model, model_path, device='cpu'):
-    """
-    Load the model state dictionary from the specified path and load it into the model.
-
-    Parameters:
-    model (torch.nn.Module): The model into which the state dictionary will be loaded.
-    model_path (str): The path from where the model will be loaded.
-    device (torch.device): The device on which the model will be loaded.
-    """
-    model.load_state_dict(torch.load(model_path, map_location=device))
-    model.to(device)
-    print(f"Model loaded from {model_path}")
-
 @st.cache_resource
 def get_model():
-    try:
-        from transformers import AutoModelForCausalLM, AutoTokenizer
-        tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT")
-        model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT")
-    except:
-        model = GPT(GPTConfig(vocab_size=32768))
-        model = torch.compile(model)
-        load_model(model, model_path="models/CatGPT.pth")
-        tokenizer = None
+    """
+    Function to load the model and tokenizer directly from the Hugging Face model hub.
+    """
+    tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT")
+    model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT")
     return model, tokenizer
-
-
-def generate_text(model, input_text='La intel·ligència artificial tindrà la capacitat de', num_return_sequences=1, max_length=100, device='cpu', temperature=1.0, top_k=10, repetition_penalty=1.2):
-    enc = ByteLevelBPETokenizer(
-        'tokenizer/vocab.json',
-        'tokenizer/merges.txt'
-    )
-
-    # Encode the input text
-    tokens = enc.encode(input_text).ids
-    tokens = torch.tensor(tokens, dtype=torch.long)
-
-    if len(tokens) > max_length:
-        max_length = len(tokens) + 50
-        print(f"Max length set to {max_length} as input text is longer than the previous max length")
-
-
-    # Training biased n-grams
-    days_of_week = [" dilluns", " dimarts", " dimecres", " dijous", " divendres", " dissabte", " diumenge"]
-    days_of_week_ids = [enc.encode(day).ids[0] for day in days_of_week]  # Code the days of the week
-    other_ids = [enc.encode(word).ids[0] for word in ["passat", " passat", " dia", "proper", " proper", " següent", "següent"]]  # Code other words
-
-    generated_texts = []
-    for _ in range(num_return_sequences):
-        x = tokens.unsqueeze(0).to(device)
-
-        # Generate sequence
-        with torch.no_grad():
-            for _ in range(max_length - x.size(1)):
-                logits, _ = model(x)
-                logits = logits[:, -1, :]
-
-                # Apply temperature scaling
-                logits = logits / temperature
-
-                # Apply repetition penalty
-                if x.size(1) > 1:
-                    for token in set(x[0].tolist()):
-                        logits[0, token] /= repetition_penalty
-
-                # Look for last token to avoid training bias n-grams
-                last_token_id = x[0, -1].item()
-                last_word = enc.decode([last_token_id])
-                
-                if last_word.lower().strip() in {"el", "passat"} or last_token_id in days_of_week_ids:
-                    for day_id in days_of_week_ids:
-                        logits[0, day_id] /= 5
-                    for other_id in other_ids:
-                        logits[0, other_id] /= 5
-
-                # Apply Top-k sampling
-                if top_k > 0:
-                    top_k_probs, top_k_indices = torch.topk(logits, top_k, dim=-1)
-                    probs = F.softmax(top_k_probs, dim=-1)
-                    next_token = top_k_indices.gather(dim=-1, index=torch.multinomial(probs, 1))
-                else:
-                    probs = F.softmax(logits, dim=-1)
-                    next_token = torch.multinomial(probs, 1)
-
-                x = torch.cat((x, next_token), dim=1)
-
-        # Decode and store the generated sequence
-        decoded = enc.decode(x[0].tolist())
-        generated_texts.append(decoded)
-
-    return generated_texts
 
 
 # Streamlit interface
@@ -121,7 +33,7 @@ with col2:
 
 random_inputs = ["La intel·ligència artificial tindrà la capacitat de",
                    "El 23 d'abril, dia de Sant Jordi, els carrers de Catalunya s'omplen de",
-                   "Durant la Guerra Civil Espanyola, Catalunya va ser un bastió de resistència republicana perquè",
+                   "Durant la Guerra Civil Espanyola, Catalunya",
                    "Els Bitcoin i altres criptomonedes s'han convertit en temes importants a Catalunya, especialment després de",
                    "La meva casa és un lloc molt acollidor",
                    "El clima mediterrani permet gaudir de llargues jornades assolellades a la vora del mar.",
@@ -140,7 +52,7 @@ num_return_sequences = st.number_input('Number of Sequences', min_value=1, max_v
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
-    max_length = st.slider('Max Length', min_value=35, max_value=200, value=75)
+    max_length = st.slider('Max Length', min_value=35, max_value=500, value=75)
 
 with col2:
     temperature = st.slider('Temperature', min_value=0.1, max_value=2.0, value=1.0, step=0.1)
@@ -155,9 +67,6 @@ with col4:
 # Load the model
 
 model, HF_tokenizer = get_model()
-
-device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
 
 # Tips for generating text
 
@@ -186,8 +95,6 @@ if st.button('Generate'):
             for output in outputs:
                 generate_text = HF_tokenizer.decode(output, skip_special_tokens=True)
                 generated_texts.append(generate_text)
-        else:
-            generated_texts = generate_text(model, input_text, num_return_sequences, max_length=max_length, device=device, temperature=temperature, top_k=top_k, repetition_penalty=repetition_penalty)
         tip_placeholder.empty()  # Delete the tip after generating the text
     for i, text in enumerate(generated_texts):
         st.write(f'Sample {i+1}:')
