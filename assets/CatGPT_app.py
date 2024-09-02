@@ -37,7 +37,8 @@ random_inputs = ["La intel·ligència artificial tindrà la capacitat de",
                    "Els Bitcoin i altres criptomonedes s'han convertit en temes importants a Catalunya, especialment després de",
                    "La meva casa és un lloc molt acollidor",
                    "El clima mediterrani permet gaudir de llargues jornades assolellades a la vora del mar.",
-                   "El sol es ponia en l'horitzó de milers de colors però els pirates no podien"]
+                   "El sol es ponia en l'horitzó de milers de colors però els pirates no podien",
+                   "L'oli d'oliva verge extra"]
 
 
 # Check if an input_text is already selected in session_state
