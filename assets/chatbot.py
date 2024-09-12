@@ -1,53 +1,43 @@
 import streamlit as st
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
 
 # Load the model and tokenizer
-model = AutoModelForCausalLM.from_pretrained("models/final_model")
-tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT")
+model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT-IT")
+tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT-IT")
 
 # Ensure model is on GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 model.to(device)
 
+# Configuration for response generation
+genconf = GenerationConfig(
+    max_length=500,           # Maximum length of the generated response
+    repetition_penalty=1.2,   # To avoid repetition of phrases in responses
+    temperature=0.6,          # Controls randomness in response (lower is more deterministic)
+    top_k=2,                  # Use top-k sampling
+    do_sample=True,           # Enable sampling
+)
+
 # Function to generate a response
-def generate_response(input_text, context=None):
-    input_text = f"<s> {input_text} </s> <s>"
-    if context:
-        input_text = context + " " + input_text
-
-    input_ids = tokenizer.encode(input_text, return_tensors="pt").to(device)
-
-    with torch.no_grad():
-        output_ids = model.generate(
-            input_ids,
-            max_length=min(1024, len(input_ids) + 250),
-            pad_token_id=tokenizer.pad_token_id,
-            eos_token_id=tokenizer.eos_token_id,
-            bos_token_id=tokenizer.bos_token_id,
-            do_sample=True,
-            top_k=2,
-            repetition_penalty=1.4
-        )
-
-    generated_ids = output_ids[0][input_ids.size(-1):]
-    decoded_output = tokenizer.decode(generated_ids, skip_special_tokens=True)
-
-    if "</s>" in decoded_output:
-        decoded_output = decoded_output.split("</s>")[0].strip()
-
-    return decoded_output
-
-def update_context(context, user_input, response, max_length=750):
-    new_interaction = f"<s> {user_input} </s> <s> {response} </s> <s>"
-    context += new_interaction
-    context_ids = tokenizer.encode(context)
-
-    if len(context_ids) > max_length:
-        context_ids = context_ids[-max_length:]
-
-    context = tokenizer.decode(context_ids, skip_special_tokens=True)
-    return context
+def generate_response(prompt):
+    # Create input with special tokens for user and assistant
+    input_text = f'<|im_start|>user \n{prompt}<|im_end|>\n<|im_start|>assistant'
+    
+    # Tokenize the input prompt
+    tokens = tokenizer.encode(input_text, return_tensors="pt").to(device)
+    
+    # Calculate the length of the prompt (we'll use this to slice the output)
+    prompt_length = tokens.shape[1]  
+    
+    # Generate the response, setting the attention mask
+    attention_mask = torch.ones(tokens.shape, dtype=torch.long, device=device)
+    output_tokens = model.generate(tokens, attention_mask=attention_mask, generation_config=genconf)
+    
+    # Decode the response from tokens, keeping only new tokens after the prompt
+    result = tokenizer.decode(output_tokens[0][prompt_length:], skip_special_tokens=True)
+    
+    return result.strip()
 
 # Streamlit UI design
 st.set_page_config(page_title="Beta Chatbot Interface", layout="centered")
@@ -132,15 +122,13 @@ if "messages" not in st.session_state:
 def send_message():
     user_input = st.session_state.input_text
     if user_input:
-        response = generate_response(user_input, st.session_state.context)
-        st.session_state.context = update_context(st.session_state.context, user_input, response)
+        response = generate_response(user_input)
         st.session_state.messages.append({"role": "user", "text": user_input})
         st.session_state.messages.append({"role": "bot", "text": response})
         st.session_state.input_text = ""  # Clear the input box
 
 def clear_chat():
     st.session_state.context = ""
-    st.session_state.messages = []
 
 # Chat container
 with st.container():
