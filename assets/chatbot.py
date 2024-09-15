@@ -1,6 +1,7 @@
 import streamlit as st
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, GenerationConfig
+import random
 
 # Load the model and tokenizer
 model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT-IT")
@@ -28,7 +29,7 @@ def generate_response(prompt):
     tokens = tokenizer.encode(input_text, return_tensors="pt").to(device)
     
     # Calculate the length of the prompt (we'll use this to slice the output)
-    prompt_length = tokens.shape[1]  
+    prompt_length = tokens.shape[1]
     
     # Generate the response, setting the attention mask
     attention_mask = torch.ones(tokens.shape, dtype=torch.long, device=device)
@@ -40,7 +41,18 @@ def generate_response(prompt):
     return result.strip()
 
 # Streamlit UI design
-st.set_page_config(page_title="Beta Chatbot Interface", layout="centered")
+st.set_page_config(page_title="CatGPT Chatbot", layout="centered")
+
+# Use columns to place the logo next to the title
+col1, col2 = st.columns([3, 1])
+
+with col1:
+    st.title('CatGPT Chatbot')
+    st.write('Chat with CatGPT, your Catalan AI assistant')
+
+with col2:
+    logo_path = "logo/CatGPT_round.png"
+    st.image(logo_path, width=150)
 
 st.markdown("""
     <style>
@@ -53,31 +65,32 @@ st.markdown("""
             border: 1px solid #b1b1b1;
         }
         .stButton>button {
-            background-color: #565a67;
+            background-color: #7289da;
             color: white;
             border-radius: 10px;
             font-size: 16px;
+            margin-top: 10px;
         }
         .stButton>button:hover {
-            background-color: #92a4dc;
+            background-color: #5b6eae;
         }
         .user-message {
-            background-color: #1E90FF;
+            background-color: #7289da;
             color: white;
             padding: 10px;
             border-radius: 10px;
             text-align: right;
-            font-weight: bold;
+            font-weight: normal;
             margin-bottom: 10px;
             margin-left: 25%;
         }
         .bot-message {
-            background-color: #3CB371;
+            background-color: #99aab5;
             color: white;
             padding: 10px;
             border-radius: 10px;
             text-align: left;
-            font-weight: bold;
+            font-weight: normal;
             margin-bottom: 10px;
             margin-right: 25%;
         }
@@ -88,47 +101,25 @@ st.markdown("""
             padding-left: 10px;
             border: 1px solid #b1b1b1;
             border-radius: 10px;
-            background-color: #444654;
+            background-color: #2c2f33;
             margin-bottom: 10px;
-        }
-        .input-container {
-            position: fixed;
-            bottom: 10px;
-            width: 60%;
-            left: 20%;
-            display: flex;
-            align-items: center;
-            padding: 10px;
-        }
-        .input-container input {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid #b1b1b1;
-            margin-right: 10px;
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Beta Chatbot Interface")
-
 # Initialize or retrieve session state
-if "context" not in st.session_state:
-    st.session_state.context = ""
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-# Input text box
-def send_message():
-    user_input = st.session_state.input_text
-    if user_input:
-        response = generate_response(user_input)
-        st.session_state.messages.append({"role": "user", "text": user_input})
-        st.session_state.messages.append({"role": "bot", "text": response})
-        st.session_state.input_text = ""  # Clear the input box
-
-def clear_chat():
-    st.session_state.context = ""
+    # Add pre-defined initial messages
+    initial_messages = [
+        "Hola! Sóc CatGPT, el teu assistent virtual en català. Com puc ajudar-te avui?",
+        "Benvingut! Estic aquí per ajudar-te amb qualsevol consulta o tasca que necessitis.",
+        "Hola! Sóc una intel·ligència artificial en català. Què puc fer per tu?",
+        "Salutacions! Aquí CatGPT, preparat per ajudar-te en el que necessitis.",
+        "Hola! Com puc ser-te útil avui?"
+    ]
+    selected_message = random.choice(initial_messages)
+    st.session_state.messages.append({"role": "bot", "text": selected_message})
 
 # Chat container
 with st.container():
@@ -140,9 +131,31 @@ with st.container():
             st.markdown(f'<div class="bot-message">{message["text"]}</div>', unsafe_allow_html=True)
     st.markdown('</div>', unsafe_allow_html=True)
 
+# Input text box
+def send_message():
+    user_input = st.session_state.input_text
+    if user_input:
+        st.session_state.messages.append({"role": "user", "text": user_input})
+        response = generate_response(user_input)
+        st.session_state.messages.append({"role": "bot", "text": response})
+        st.session_state.input_text = ""  # Clear the input box
+
+def clear_chat():
+    st.session_state.messages = []
+    # Add a new initial message
+    initial_messages = [
+        "Hola! Sóc CatGPT, el teu assistent virtual en català. Com puc ajudar-te avui?",
+        "Benvingut! Estic aquí per ajudar-te amb qualsevol consulta o tasca que necessitis.",
+        "Hola! Sóc una intel·ligència artificial en català. Què puc fer per tu?",
+        "Salutacions! Aquí CatGPT, preparat per ajudar-te en el que necessitis.",
+        "Hola! Com puc ser-te útil avui?"
+    ]
+    selected_message = random.choice(initial_messages)
+    st.session_state.messages.append({"role": "bot", "text": selected_message})
+
 # Clear chat button
 if st.button("Clear Chat"):
     clear_chat()
 
 # Input container at the bottom
-st.text_input("You:", value="", key="input_text", on_change=send_message, placeholder="Type your message here...")
+st.text_input("Type your message here...", value="", key="input_text", on_change=send_message, placeholder="Type your message here...")
