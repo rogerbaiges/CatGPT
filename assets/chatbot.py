@@ -23,21 +23,25 @@ genconf = GenerationConfig(
 # Function to generate a response
 def generate_response(prompt):
     # Create input with special tokens for user and assistant
-    input_text = f'<|im_start|>user \n{prompt}<|im_end|>\n<|im_start|>assistant'
-    
+    input_text = f'<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant'
+
     # Tokenize the input prompt
     tokens = tokenizer.encode(input_text, return_tensors="pt").to(device)
-    
+
     # Calculate the length of the prompt (we'll use this to slice the output)
     prompt_length = tokens.shape[1]
-    
+
     # Generate the response, setting the attention mask
     attention_mask = torch.ones(tokens.shape, dtype=torch.long, device=device)
-    output_tokens = model.generate(tokens, attention_mask=attention_mask, generation_config=genconf)
-    
+    output_tokens = model.generate(
+        tokens,
+        attention_mask=attention_mask,
+        generation_config=genconf
+    )
+
     # Decode the response from tokens, keeping only new tokens after the prompt
     result = tokenizer.decode(output_tokens[0][prompt_length:], skip_special_tokens=True)
-    
+
     return result.strip()
 
 # Streamlit UI design
@@ -74,25 +78,29 @@ st.markdown("""
         .stButton>button:hover {
             background-color: #5b6eae;
         }
-        .user-message {
+        .message-container {
+            display: flex;
+            margin-bottom: 10px;
+        }
+        .message-container.user {
+            justify-content: flex-end;
+        }
+        .message-container.bot {
+            justify-content: flex-start;
+        }
+        .user-message, .bot-message {
             background-color: #7289da;
             color: white;
             padding: 10px;
             border-radius: 10px;
-            text-align: right;
+            text-align: left;  /* Align text to the left within the bubble */
             font-weight: normal;
-            margin-bottom: 10px;
-            margin-left: 25%;
+            max-width: 70%;    /* Limit the maximum width of the message bubble */
+            white-space: pre-wrap;
+            word-wrap: break-word;
         }
         .bot-message {
             background-color: #99aab5;
-            color: white;
-            padding: 10px;
-            border-radius: 10px;
-            text-align: left;
-            font-weight: normal;
-            margin-bottom: 10px;
-            margin-right: 25%;
         }
         .chat-container {
             max-height: 500px;
@@ -126,9 +134,23 @@ with st.container():
     st.markdown('<div class="chat-container">', unsafe_allow_html=True)
     for message in st.session_state.messages:
         if message["role"] == "user":
-            st.markdown(f'<div class="user-message">{message["text"]}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'''
+                <div class="message-container user">
+                    <div class="user-message">{message["text"]}</div>
+                </div>
+                ''',
+                unsafe_allow_html=True
+            )
         else:
-            st.markdown(f'<div class="bot-message">{message["text"]}</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'''
+                <div class="message-container bot">
+                    <div class="bot-message">{message["text"]}</div>
+                </div>
+                ''',
+                unsafe_allow_html=True
+            )
     st.markdown('</div>', unsafe_allow_html=True)
 
 # Input text box
@@ -158,4 +180,10 @@ if st.button("Clear Chat"):
     clear_chat()
 
 # Input container at the bottom
-st.text_input("Type your message here...", value="", key="input_text", on_change=send_message, placeholder="Type your message here...")
+st.text_input(
+    "Type your message here...",
+    value="",
+    key="input_text",
+    on_change=send_message,
+    placeholder="Type your message here..."
+)
