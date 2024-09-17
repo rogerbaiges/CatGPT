@@ -6,9 +6,9 @@ import logging
 
 # Load the model and tokenizer
 
-model = AutoModelForCausalLM.from_pretrained("assets/CatGPT-IT")
+model = AutoModelForCausalLM.from_pretrained("baiges/CatGPT-IT")
 logging.getLogger("transformers").setLevel(logging.ERROR)
-tokenizer = AutoTokenizer.from_pretrained("assets/CatGPT-IT")
+tokenizer = AutoTokenizer.from_pretrained("baiges/CatGPT-IT")
 
 # Ensure model is on GPU if available
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")

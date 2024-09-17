@@ -5,7 +5,7 @@ import signal
 
 def run_streamlit():
     # Obtain the path to the main.py file
-    main_py_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'CatGPT_app.py')
+    main_py_path = os.path.join(os.path.dirname(os.path.abspath(__file__)).replace('run', 'assets'), 'CatGPT_app.py')
     
     # Run Streamlit as a subprocess
     cmd = ["streamlit", "run", main_py_path]
