@@ -223,10 +223,10 @@ La següent és l'estructura del repositori de codi:
 ## How to Use the Model / Com Utilitzar el Model
 
 **English:**  
-To use CatGPT, you simply need to clone the repository, install the required libraries, and run the `CatGPT_run.py` script. This script will launch the Streamlit app, where you can interact with the model through an easy-to-use interface.
+To use CatGPT, you simply need to clone the repository, install the required libraries, and run the `CatGPT_run.py` or the `CatGPT-IT_run.py` script depending on the model you want to use. This script will launch the Streamlit app, where you can interact with the model through an easy-to-use interface.
 
 **Català:**  
-Per utilitzar CatGPT, només cal clonar el repositori, instal·lar les biblioteques necessàries i executar el script `CatGPT_run.py`. Aquest script llançarà l'aplicació Streamlit, on podràs interactuar amb el model a través d'una interfície fàcil d'usar.
+Per utilitzar CatGPT, només cal clonar el repositori, instal·lar les biblioteques necessàries i executar l'script `CatGPT_run.py` o `CatGPT-IT_run.py`depenent del model a utilizar. Aquest script llançarà l'aplicació Streamlit, on podràs interactuar amb el model a través d'una interfície fàcil d'usar.
 
 ## App Structure / Estructura de l'App
 
@@ -284,49 +284,46 @@ En aquesta captura de pantalla, el model genera una descripció detallada d'una 
 ## Installation / Instal·lació
 
 **English:**  
-1. If you don't have Git LFS installed, you need to install it first to download the model file correctly:
-    ```bash
-    git lfs install
-    ```
-
-2. Clone this repository to your local machine:
+1. Clone this repository to your local machine:
     ```bash
     git clone https://github.com/yourusername/CatGPT.git
     cd CatGPT
     ```
 
-3. Install the required libraries:
+2. Install the required libraries:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Run the app:
+3. Run the app:
     ```bash
-    python assets/CatGPT_run.py
+    python run/CatGPT_run.py
+    ```
+
+   ```bash
+   python run/CatGPT-IT_run.py
     ```
 
 **Català:**  
-1. Si no tens Git LFS instal·lat, cal que l'instal·lis primer per descarregar correctament l'arxiu del model:
-    ```bash
-    git lfs install
-    ```
 
-2. Clona aquest repositori a la teva màquina local:
+1. Clona aquest repositori a la teva màquina local:
     ```bash
     git clone https://github.com/yourusername/CatGPT.git
     cd CatGPT
     ```
 
-3. Instal·la les biblioteques necessàries:
+2. Instal·la les biblioteques necessàries:
     ```bash
     pip install -r requirements.txt
     ```
 
-4. Executa l'aplicació:
+3. Executa l'aplicació:
     ```bash
-    python assets/CatGPT_run.py
+    python run/CatGPT_run.py
     ```
-
+   ```bash
+   python run/CatGPT-IT_run.py
+    ```
 
 ## Contributing / Contribucions
 
