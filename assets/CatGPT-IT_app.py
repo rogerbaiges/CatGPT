@@ -18,8 +18,8 @@ model.to(device)
 genconf = GenerationConfig(
     max_length=500,           # Maximum length of the generated response
     repetition_penalty=1.2,   # To avoid repetition of phrases in responses
-    temperature=0.6,          # Controls randomness in response (lower is more deterministic)
-    top_k=2,                  # Use top-k sampling
+    temperature=0.4,          # Controls randomness in response (lower is more deterministic)
+    top_k=1,                  # Use top-k sampling
     do_sample=True,           # Enable sampling
 )
 
