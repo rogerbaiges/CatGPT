@@ -255,30 +255,48 @@ A l'aplicació, es poden ajustar diversos paràmetres per afinar la sortida del 
 ### Example Screenshots / Captures de Pantalla d'Exemple
 
 **English:**  
-Below are some example screenshots showing the app in action, demonstrating different text prompts and the corresponding generated outputs. The screenshots showcase how the CatGPT model can generate coherent and contextually appropriate text in Catalan. The first example explores a futuristic scenario related to artificial intelligence, while the second example describes a cozy home environment.
+The screenshots below demonstrate how the CatGPT model performs across different tasks, showcasing both the base text generation model and the instruction-based model. The examples highlight the model's coherence, contextual awareness, and ability to generate natural Catalan text in diverse scenarios. The first example demonstrates the base model’s ability to complete a text about olive oil, while the other two examples show how the instruction-based model handles specific queries and tasks in NLP.
 
 **Català:**  
-A continuació es mostren algunes captures de pantalla que mostren l'aplicació en acció, demostrant diferents frases d'entrada i les corresponents sortides generades. Les captures de pantalla mostren com el model CatGPT pot generar text coherent i adequat al context en català. El primer exemple explora un escenari futurista relacionat amb la intel·ligència artificial, mentre que el segon exemple descriu un entorn de llar acollidor.
+A continuació, es mostren exemples que demostren el rendiment del model CatGPT en diferents tasques, mostrant tant el model base de generació de text com el model basat en instruccions. Els exemples il·lustren la coherència, la consciència contextual i la capacitat del model per generar text natural en català en diversos escenaris. El primer exemple demostra la capacitat del model base per completar un text sobre oli d’oliva, mentre que els altres dos exemples mostren com el model basat en instruccions maneja consultes específiques i tasques en PLN.
+
+---
 
 <div align="center">
-  <img src="images/future_AI_example.png" alt="AI Example" style="width:65%; height:auto;">
+  <img src="examples/olive_oil.png" alt="Olive Oil Example" style="width:65%; height:auto;">
 </div>
 
 **English:**  
-In this screenshot, the model generates a text continuation related to the future capabilities of artificial intelligence. The output highlights how AI can enhance professional work environments and contribute to a more sustainable and human-centered society.
+In this screenshot, the base model is prompted to generate text about extra virgin olive oil. The result illustrates the model’s ability to provide a coherent, informative continuation, emphasizing both the nutritional benefits of the product and its cultural significance in Spain. The output is particularly notable for its fluency and knowledge of domain-specific topics.
 
 **Català:**  
-En aquesta captura de pantalla, el model genera una continuació del text relacionada amb les capacitats futures de la intel·ligència artificial. La sortida ressalta com la IA pot millorar els entorns de treball professionals i contribuir a una societat més sostenible i centrada en les persones.
+En aquesta captura de pantalla, el model base rep com a entrada un text sobre l'oli d'oliva verge extra. El resultat il·lustra la capacitat del model per oferir una continuació coherent i informativa, ressaltant tant els beneficis nutricionals del producte com la seva importància cultural a Espanya. La sortida destaca per la seva fluïdesa i el coneixement de temes específics del domini.
+
+---
 
 <div align="center">
-  <img src="images/house_example.png" alt="House Example" style="width:65%; height:auto;">
+  <img src="examples/sentiment_analysis.png" alt="Sentiment Analysis Example" style="width:55%; height:auto;">
 </div>
 
 **English:**  
-In this screenshot, the model generates a detailed description of a cozy home. The output provides a vivid depiction of the house’s features, including its layout, amenities, and overall atmosphere, demonstrating the model's ability to handle descriptive text generation.
+This screenshot demonstrates the instruction-based model’s ability to perform sentiment analysis. The model accurately identifies the sentiment in various sentences, providing clear, contextually appropriate responses in Catalan. This example showcases the model’s skill in natural language understanding tasks and its effective handling of user queries.
 
 **Català:**  
-En aquesta captura de pantalla, el model genera una descripció detallada d'una casa acollidora. La sortida proporciona una descripció vívida de les característiques de la casa, incloent-hi la seva distribució, comoditats i l'ambient general, demostrant la capacitat del model per manejar la generació de textos descriptius.
+Aquesta captura de pantalla demostra la capacitat del model basat en instruccions per realitzar anàlisis de sentiments. El model identifica amb precisió el sentiment en diverses frases, oferint respostes clares i adequades al context en català. Aquest exemple mostra l’habilitat del model en tasques de comprensió del llenguatge natural i la seva eficàcia en gestionar consultes d’usuaris.
+
+---
+
+<div align="center">
+  <img src="examples/isaac_newton.png" alt="Isaac Newton Example" style="width:65%; height:auto;">
+</div>
+
+**English:**  
+In this final example, the instruction-based model generates a creative response, specifically a poem about Isaac Newton. The output demonstrates the model’s ability to generate rich, descriptive, and imaginative content in Catalan, illustrating how it can be used for more open-ended and creative text generation tasks.
+
+**Català:**  
+En aquest darrer exemple, el model basat en instruccions genera una resposta creativa, concretament un poema sobre Isaac Newton. La sortida demostra la capacitat del model per generar contingut ric, descriptiu i imaginatiu en català, il·lustrant com pot utilitzar-se per a tasques de generació de text més obertes i creatives.
+
+---
 
 
 ## Installation / Instal·lació
