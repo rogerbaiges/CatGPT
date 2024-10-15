@@ -1,3 +1,6 @@
+[![base model](https://img.shields.io/badge/🤗-base%20model-grey)](https://huggingface.co/baiges/CatGPT)
+[![instruct model](https://img.shields.io/badge/🤗-instruct%20model-grey)](https://huggingface.co/baiges/CatGPT-IT)
+
 # CatGPT
 
 <div align="center">
